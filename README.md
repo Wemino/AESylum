@@ -63,15 +63,13 @@ AESylum refuses to process the April 18th 2011 build (`0x4DAC7482`) since there'
 
 ## Usage
 
-**Download**: [AESylum.zip](https://github.com/Wemino/AESylum/releases/latest/download/AESylum.zip)  
+Download: [version requiring .NET 10](https://github.com/Wemino/AESylum/releases/latest/download/AESylum.zip) or [standalone version](https://github.com/Wemino/AESylum/releases/latest/download/AESylum-standalone.zip).
 
 ```
 AESylum.exe path\to\AliceMadnessReturns.exe
 ```
 
 The original file is renamed to `AliceMadnessReturns.exe.bak` and a clean executable is written in its place.
-
-Requires .NET 10
 
 ## Exception for EA
 
