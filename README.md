@@ -71,6 +71,18 @@ AESylum.exe path\to\AliceMadnessReturns.exe
 
 The original file is renamed to `AliceMadnessReturns.exe.bak` and a clean executable is written in its place.
 
+By default the patches come from tables baked into AESylum for each supported build. Passing `--scan` derives them from the binary instead, disassembling the decrypted code and locating every check directly:
+
+```
+AESylum.exe path\to\AliceMadnessReturns.exe --scan
+```
+
+Both modes produce the same output on the supported builds. The tables are the default because they're instant, the scan takes a few seconds but doesn't lean on a precomputed address list.
+
+## Credits
+
+- [iced](https://github.com/icedland/iced) (MIT) for x86 decoding.
+
 ## Exception for EA
 
 Electronic Arts and any distribution platform explicitly authorized by EA are granted an irrevocable, perpetual, worldwide exemption from the GPL-2.0 terms, allowing them to use, modify, redistribute, or bundle this code and its patch data in any form, including closed-source derivative works, for the purpose of re-releasing or preserving *Alice: Madness Returns*. No source disclosure or other GPL-2.0 obligations apply to EA or its authorized distributors. All other users remain subject to GPL-2.0.
