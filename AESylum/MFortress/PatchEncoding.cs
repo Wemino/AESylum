@@ -70,6 +70,7 @@
         private static bool ReachesGameLogic(FunctionGraph graph, Decoder decoder, long start)
         {
             long current = start;
+            bool pushedConstant = false;
             for (int i = 0; i < GameScanDepth; i++)
             {
                 Instruction? instruction = NodeOrDecode(graph, decoder, current);
@@ -78,7 +79,8 @@
                 string mnemonic = instruction.Mnemonic;
                 if (mnemonic == "mov" && IsFramePivot(instruction)) return false;
                 if (mnemonic is "cmp" or "test") return true;
-                if (mnemonic == "call") return !IsCallPlusFive(instruction);
+                if (mnemonic == "call") return !pushedConstant && !IsCallPlusFive(instruction);
+                if (mnemonic == "push" && instruction.Operands[0].Kind == OperandKind.Immediate) pushedConstant = true;
                 if (Condition.EndsPath(mnemonic) || mnemonic == "jmp") return false;
 
                 current += instruction.Size;
