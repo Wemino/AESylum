@@ -72,27 +72,13 @@ namespace AESylum
 
         public static void Main(string[] args)
         {
-            string? input = null;
-            bool useScan = false;
-            foreach (string argument in args)
+            if (args.Length == 0)
             {
-                if (argument == "--scan")
-                {
-                    useScan = true;
-                }
-                else if (input == null)
-                {
-                    input = argument;
-                }
-            }
-
-            if (input == null)
-            {
-                Console.WriteLine("Usage: AESylum <input-file> [--scan]");
-                Console.WriteLine("  --scan  derive the patches from the binary instead of the built-in tables");
+                Console.WriteLine("Usage: AESylum <input-file>");
                 return;
             }
 
+            string input = args[0];
             string backup = input + ".bak";
             string output = input;
 
@@ -159,15 +145,8 @@ namespace AESylum
             Console.WriteLine("Rebuilding the PE header...");
             RestoreHeader(ref raw);
 
-            Patch[]? scanned = null;
-            if (useScan)
-            {
-                Console.WriteLine("Scanning the binary for DRM checks...");
-                scanned = PatchScanner.Scan(raw);
-            }
-
             Console.WriteLine("Patching out the DRM checks...");
-            ApplyPatches(raw, scanned);
+            ApplyPatches(raw);
 
             File.WriteAllBytes(output, raw);
             Console.WriteLine();
@@ -314,22 +293,29 @@ namespace AESylum
 
         #region Phase 4 – Apply per-build patches
 
-        private static void ApplyPatches(byte[] raw, Patch[]? scanned)
+        private static void ApplyPatches(byte[] raw)
         {
             int ntHeadersOffset = ToInt32(raw, 0x3C);
             uint timeDateStamp = (uint)ToInt32(raw, ntHeadersOffset + 4 + 4);
 
-            BuildInfo? build = FindBuild(timeDateStamp);
-            Patch[]? patches = scanned ?? build?.Patches;
+            BuildInfo? build = null;
+            foreach (BuildInfo candidate in Builds)
+            {
+                if (candidate.TimeDateStamp == timeDateStamp)
+                {
+                    build = candidate;
+                    break;
+                }
+            }
 
-            if (patches == null || patches.Length == 0)
+            if (build?.Patches == null || build.Patches.Length == 0)
             {
                 Console.WriteLine($"    No patches defined for build 0x{timeDateStamp:X8}.");
                 return;
             }
 
             int applied = 0;
-            foreach (Patch patch in patches)
+            foreach (Patch patch in build.Patches)
             {
                 int fileOffset = RvaToFileOffset(raw, patch.Rva);
                 if (fileOffset < 0)
