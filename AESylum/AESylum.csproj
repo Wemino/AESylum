@@ -5,8 +5,11 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	 <PublishSingleFile>true</PublishSingleFile>
 	 <SelfContained>false</SelfContained>
+	 <TieredCompilation>false</TieredCompilation>
+	 <DefineConstants>$(DefineConstants);HAS_SPAN;DECODER;INSTR_INFO</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
